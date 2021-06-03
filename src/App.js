@@ -1,23 +1,20 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
+import { useContext } from "react";
+import globalContext from "./context/globalContext";
+import Routes from "./Components/Routes";
+import { auth } from "./firebase/config";
 
 function App() {
+  const { message } = useContext(globalContext);
+  console.log(auth.currentUser);
+  console.log(message);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Header />
+      <Routes />
+      <Footer />
     </div>
   );
 }
