@@ -1,20 +1,22 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDVWbOrTzQI1QfHO6QFX8HOV83ZgBScTSI",
-  authDomain: "image-organizer-7df7c.firebaseapp.com",
-  projectId: "image-organizer-7df7c",
-  storageBucket: "image-organizer-7df7c.appspot.com",
-  messagingSenderId: "951078265172",
-  appId: "1:951078265172:web:38fac9edbda119ddfc28c1",
-  measurementId: "G-P2X6C9462Q",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
-// auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+const storage = firebase.storage();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
-export { db, auth, firebase };
+export { db, auth, firebase, storage };

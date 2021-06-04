@@ -1,14 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import Card from "../Components/Card";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useToast } from "@chakra-ui/toast";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 import { errorToast, successToast } from "../utils/toasts";
+import globalContext from "../context/globalContext";
 
 const Register = () => {
+  const { user } = useContext(globalContext);
   const toast = useToast();
   const [formData, setFormData] = useState({
     userName: "",
@@ -30,16 +32,27 @@ const Register = () => {
     auth
       .createUserWithEmailAndPassword(formData.email, formData.password)
       .then((userCredential) => {
-        console.log(userCredential.user);
-        successToast(toast, "Registered");
+        let registeredUser = userCredential.user;
+        registeredUser.updateProfile({
+          displayName: formData.userName,
+        });
+        db.collection("users").doc(formData.email).set({
+          name: registeredUser.displayName,
+          uid: registeredUser.uid,
+          email: registeredUser.email,
+          photoUrl: registeredUser.photoURL,
+          phoneNumber: registeredUser.phoneNumber,
+        });
+        successToast(toast, "User Registered ");
         // localStorage.setItem("user", userCredential.user);
       })
       .catch((err) => {
         errorToast(toast, err.message);
         console.log(err);
       });
-    console.log(formData);
   };
+  if (user) return <Redirect to="/" />;
+
   return (
     <>
       <Card

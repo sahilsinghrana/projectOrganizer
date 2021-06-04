@@ -59,8 +59,6 @@ const Login = () => {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          width: "20vw",
-          height: "50vh",
         }}
       >
         <form>

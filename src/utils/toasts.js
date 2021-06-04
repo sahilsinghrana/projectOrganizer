@@ -3,7 +3,7 @@ const errorToast = (toast, message) => {
     title: message,
     status: "error",
     isClosable: true,
-    duration: 3500,
+    duration: 5000,
     variant: "left-accent",
   });
 };
@@ -13,7 +13,7 @@ const successToast = (toast, message) => {
     title: message,
     status: "success",
     isClosable: true,
-    duration: 3500,
+    duration: 5000,
     variant: "left-accent",
   });
 };
