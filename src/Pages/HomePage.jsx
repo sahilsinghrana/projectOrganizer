@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import placeholderImage from "../assets/images/project_placeholder.jpg";
 import CreateProjectModal from "../Components/CreateProjectModal";
 import globalContext from "../context/globalContext";
+import { Link } from "react-router-dom";
 import "./styles.css";
 // import { projects } from "../data";
 import { db } from "../firebase/config";
@@ -34,7 +35,6 @@ const HomePage = () => {
     <div
       style={{
         display: "flex",
-        padding: "2% 10%",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
@@ -58,6 +58,7 @@ const HomePage = () => {
           projects.map((project) => (
             <ProjectCard
               projectTitle={project.projectName}
+              projectId={project.projectId}
               projectImageUrl={project.imageUrl}
               startDate={project.startDate}
             />
@@ -68,66 +69,83 @@ const HomePage = () => {
   );
 };
 
-const ProjectCard = ({ projectTitle, projectImageUrl, startDate }) => {
+const ProjectCard = ({
+  projectTitle,
+  projectImageUrl,
+  startDate,
+  projectId,
+}) => {
   return (
-    <div
-      className="project-card"
-      style={{
-        minWidth: "15vmax",
-        minHeight: "20vmax",
-        maxWidth: "40vmax",
-        maxHeight: "40vmax",
-        background: "whitesmoke",
-        borderRadius: "20px",
-        margin: "20px 10px",
-
-        boxShadow:
-          " 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-    >
-      <div className="project-card-overlay">
-        <Button>Open Project</Button>
-      </div>
-      <Image
-        src={projectImageUrl}
-        fallbackSrc={placeholderImage}
-        alt="Test"
-        w={[300, 400, 400]}
-        h={[250, 200, 200]}
+    <Link to={`/project/${projectId}`} className="btn btn-primary">
+      <div
+        className="project-card"
         style={{
-          // maxWidth: "100%",
-          objectFit: "cover",
-          boxShadow: "0px 5px 20px rgb(10 129 171 / 32%)",
-        }}
-      />
+          minWidth: "15vmax",
+          minHeight: "20vmax",
+          maxWidth: "40vmax",
+          maxHeight: "40vmax",
+          background: "whitesmoke",
+          borderRadius: "20px",
+          margin: "20px 10px",
 
-      <Heading as="h3" size="lg">
-        {projectTitle}
-      </Heading>
-      <span
-        style={{
-          textAlign: "center",
-          fontSize: "0.9rem",
-          color: "grey",
+          boxShadow:
+            " 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+          overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        Started : {startDate}
-      </span>
-      <div
-        style={{
-          background: "#0c4271",
-          width: "100%",
-          height: "15px",
-          display: "flex",
-          justifyContent: "center",
-        }}
-      ></div>
-    </div>
+        <div className="project-card-overlay">
+          <span
+            style={{
+              mixBlendMode: "color-dodge",
+              color: "gray",
+              textEmphasis: "blueviolet",
+              fontWeight: "bolder",
+              fontSize: "1.5rem",
+            }}
+          >
+            Click To Open Project
+          </span>
+        </div>
+        <Image
+          src={projectImageUrl}
+          fallbackSrc={placeholderImage}
+          alt="Test"
+          w={[300, 400, 400]}
+          h={[250, 200, 200]}
+          style={{
+            // maxWidth: "100%",
+            objectFit: "cover",
+            boxShadow: "0px 5px 20px rgb(10 129 171 / 32%)",
+          }}
+        />
+
+        <Heading as="h3" size="lg">
+          {projectTitle}
+        </Heading>
+        <span
+          style={{
+            textAlign: "center",
+            fontSize: "0.9rem",
+            color: "grey",
+          }}
+        >
+          Started : {startDate}
+        </span>
+        <div
+          style={{
+            background: "#0c4271",
+            width: "100%",
+            height: "15px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        ></div>
+      </div>
+    </Link>
   );
 };
 export default HomePage;

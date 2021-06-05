@@ -9,6 +9,7 @@ import {
 import globalContext from "../context/globalContext";
 import AuthenticationPage from "../Pages/AuthenticationPage";
 import HomePage from "../Pages/HomePage";
+import ProjectDashboard from "../Pages/ProjectDashboard";
 
 const Routes = () => {
   const { user } = useContext(globalContext);
@@ -16,7 +17,7 @@ const Routes = () => {
 
   return (
     <>
-      {!user && location.pathname !== "/register" && <Redirect to="/login" />}
+      {/* {!user && location.pathname !== "/register" && <Redirect to="/login" />} */}
       <div className="body">
         <Switch>
           <Route path="/login" exact>
@@ -24,6 +25,9 @@ const Routes = () => {
           </Route>
           <Route path="/register" exact>
             <AuthenticationPage />
+          </Route>
+          <Route path="/project/:projectId" exact>
+            <ProjectDashboard />
           </Route>
           <Route path="/">
             <HomePage />
