@@ -21,7 +21,9 @@ const Header = () => {
     <div className="header-main">
       <div className="header-left-section">Menu</div>
       <div className="header-brand-main">
-        <Heading>Image Organizer</Heading>
+        <Heading as="h1" size="md" wordBreak="break-word">
+          Image Organizer
+        </Heading>
       </div>
       <div className="header-navigation">
         {user && (

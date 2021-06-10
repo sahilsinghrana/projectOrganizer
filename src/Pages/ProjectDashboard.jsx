@@ -1,6 +1,4 @@
-import { Button } from "@chakra-ui/button";
 import { Heading } from "@chakra-ui/layout";
-import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -19,11 +17,10 @@ const ProjectDashboard = () => {
         setProjectDetails(response.data());
         console.log(response.data());
       });
-  });
+  }, []);
 
   return (
     <div style={{}}>
-      <FloatingMenu />
       <Heading
         as="h2"
         size="xl"
@@ -33,7 +30,7 @@ const ProjectDashboard = () => {
         marginBottom="4"
         style={{ textShadow: "1px 3px 5px rgba(0,0,0,0.8)" }}
       >
-        {projectDetails?.projectName} - &nbsp;
+        {projectDetails?.projectName} &nbsp;
         <span
           style={{
             fontSize: "1rem",
@@ -47,7 +44,7 @@ const ProjectDashboard = () => {
         </span>
       </Heading>
       <Tabs>
-        <TabList>
+        <TabList overflow="auto" overflowY="hidden">
           <Tab>Organizer</Tab>
           <Tab>Tasks</Tab>
           <Tab>Poll</Tab>
@@ -55,41 +52,15 @@ const ProjectDashboard = () => {
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Organizer />
+            <Organizer projectId={projectId} />
           </TabPanel>
           <TabPanel>
-            <Tasks />
+            <Tasks projectId={projectId} />
           </TabPanel>
           <TabPanel>{/* Poll Component */}</TabPanel>
           <TabPanel>{/* Lucky Options Component */}</TabPanel>
         </TabPanels>
       </Tabs>
-    </div>
-  );
-};
-
-const FloatingMenu = () => {
-  return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "5%",
-        right: "3%",
-      }}
-    >
-      <Menu isLazy>
-        <MenuButton colorScheme="orange" as={Button}>
-          <i className="fas fa-plus"> </i>
-        </MenuButton>
-        <MenuList>
-          <MenuItem>
-            <i className="fas fa-images"> </i> &nbsp; Add Image
-          </MenuItem>
-          <MenuItem>
-            <i className="fas fa-file-alt"> </i> &nbsp; Open Text Editor
-          </MenuItem>
-        </MenuList>
-      </Menu>{" "}
     </div>
   );
 };

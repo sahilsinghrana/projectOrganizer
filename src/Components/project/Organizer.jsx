@@ -1,10 +1,14 @@
 import { Heading } from "@chakra-ui/layout";
-import { memo } from "react";
+import { memo, useState } from "react";
 import placeholderImage from "../../assets/images/project_placeholder.jpg";
+import LatestImages from "./LatestImages";
+import ProjectFloatingMenu from "./ProjectFloatingMenu";
 
-const Organizer = () => {
+const Organizer = ({ projectId }) => {
+  const [flag, setFlag] = useState(false);
   return (
     <div>
+      <ProjectFloatingMenu projectId={projectId} setFlag={setFlag} />
       <div>
         <div
           style={{
@@ -19,16 +23,16 @@ const Organizer = () => {
           <FolderCard title={"Done"} />
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>
-          <SmallCard title={"Rejected"} />
-          <SmallCard title={"Archive"} />
+          <SmallFolderCard title={"Rejected"} />
+          <SmallFolderCard title={"Archive"} />
         </div>
       </div>
-      <div>All Images of the project</div>
+      <LatestImages projectId={projectId} flag={flag} setFlag={setFlag} />
     </div>
   );
 };
 
-const SmallCard = ({ title, styles }) => {
+const SmallFolderCard = ({ title, styles }) => {
   return (
     <div
       className="project-card"

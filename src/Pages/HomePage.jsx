@@ -1,4 +1,3 @@
-import { Button } from "@chakra-ui/button";
 import { Image } from "@chakra-ui/image";
 import { Heading } from "@chakra-ui/layout";
 import { useContext, useEffect, useState } from "react";
@@ -16,7 +15,7 @@ const HomePage = () => {
     if (user) {
       fetchProjects();
     }
-  }, []);
+  }, [user]);
   const fetchProjects = async () => {
     let snapshot = await db
       .collection("users")

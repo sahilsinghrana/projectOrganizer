@@ -2,20 +2,20 @@ import { Link, Redirect } from "react-router-dom";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
-import Card from "../Components/Card";
+import Card from "./Card";
 import { useContext, useState } from "react";
 import { auth } from "../firebase/config";
-import globalContext from "../context/globalContext";
-import Loader from "../Components/Loader";
+import Loader from "./Loader";
 import {
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/alert";
+import { AuthContext } from "../Auth";
 
 const Login = () => {
-  const { user, setUser } = useContext(globalContext);
+  const { currentUser } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -36,7 +36,6 @@ const Login = () => {
       .signInWithEmailAndPassword(formData.email, formData.password)
       .then((response) => {
         setLoading(false);
-        setUser(response);
         console.log(response);
         setErrorMessage();
       })
@@ -50,7 +49,7 @@ const Login = () => {
       });
   };
 
-  if (user) return <Redirect to="/" />;
+  if (currentUser) return <Redirect to="/" />;
   return (
     <>
       <Card

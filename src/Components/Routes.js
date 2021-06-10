@@ -1,40 +1,29 @@
-import { useContext } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Redirect,
-  useLocation,
-} from "react-router-dom";
-import globalContext from "../context/globalContext";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import AuthenticationPage from "../Pages/AuthenticationPage";
 import HomePage from "../Pages/HomePage";
 import ProjectDashboard from "../Pages/ProjectDashboard";
+import PrivateRoute from "./PrivateRoute";
 
 const Routes = () => {
-  const { user } = useContext(globalContext);
-  const location = useLocation();
-
   return (
-    <>
-      {/* {!user && location.pathname !== "/register" && <Redirect to="/login" />} */}
-      <div className="body">
-        <Switch>
-          <Route path="/login" exact>
-            <AuthenticationPage />
-          </Route>
-          <Route path="/register" exact>
-            <AuthenticationPage />
-          </Route>
-          <Route path="/project/:projectId" exact>
-            <ProjectDashboard />
-          </Route>
-          <Route path="/">
-            <HomePage />
-          </Route>
-        </Switch>
-      </div>
-    </>
+    <div className="body">
+      <PrivateRoute
+        exact
+        path="/project/:projectId"
+        component={ProjectDashboard}
+      />
+      <PrivateRoute
+        exact
+        path="/project/:projectId/:statusName"
+        component={ProjectDashboard}
+      />
+
+      <PrivateRoute exact path="/" component={HomePage} />
+
+      <Route exact path="/login" component={AuthenticationPage} />
+
+      <Route exact path="/register" component={AuthenticationPage} />
+    </div>
   );
 };
 

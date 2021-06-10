@@ -20,3 +20,29 @@
 .project-card:hover .project-card-overlay {
   height: 100%;
 }
+
+.project-img-container {
+  position: relative;
+}
+
+.project-img-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #177b998f;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: 0.5s ease;
+  display: flex;
+  justify-content: flex-end;
+  z-index: 9;
+  /* align-items: center; */
+}
+
+.project-img-container:hover .project-img-overlay {
+  opacity: 1;
+  cursor: pointer;
+}

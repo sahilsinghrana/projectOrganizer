@@ -6,20 +6,21 @@ import globalContext from "./context/globalContext";
 import Routes from "./Components/Routes";
 import { auth } from "./firebase/config";
 import { Skeleton } from "@chakra-ui/skeleton";
+import { AuthProvider } from "./Auth";
 
 function App() {
-  const { setUser } = useContext(globalContext);
+  const { user, setUser } = useContext(globalContext);
   const [loading, setLoading] = useState(false);
   // console.log(indexedDB.open("firebaseLocalStorageDb", 1));
   useEffect(() => {
-    setLoading(true);
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
+    auth.onAuthStateChanged((usr) => {
+      setLoading(true);
+      if (usr) {
+        setUser(usr);
       }
       setLoading(false);
     });
-  }, []);
+  }, [user]);
 
   if (loading)
     return (
@@ -28,7 +29,9 @@ function App() {
   return (
     <div className="app">
       <Header />
-      <Routes />
+      <AuthProvider>
+        <Routes />
+      </AuthProvider>
       <Footer />
     </div>
   );
