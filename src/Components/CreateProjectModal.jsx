@@ -14,20 +14,20 @@ import {
   ModalOverlay,
 } from "@chakra-ui/modal";
 import { Textarea } from "@chakra-ui/textarea";
-import { useContext, useState } from "react";
+import { memo, useContext, useState } from "react";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 
 import { errorToast, successToast } from "../utils/toasts";
 
 import { db, storage } from "../firebase/config";
-import globalContext from "../context/globalContext";
+import { AuthContext } from "../Auth";
 
 const animatedComponents = makeAnimated();
 
 function CreateProjectModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { user } = useContext(globalContext);
+  const { currentUser } = useContext(AuthContext);
   const [selectedImage, setSelectedImage] = useState();
   const [tempSelectedImageURL, setTempSelectedImageURL] = useState();
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -84,24 +84,57 @@ function CreateProjectModal() {
       addToDB(formData);
     }
   };
-
+  const defaultStatuses = {
+    All: {
+      name: "All",
+      isDeletable: false,
+    },
+    Completed: {
+      name: "Completed",
+    },
+    Pending: {
+      name: "Pending",
+    },
+    Archive: {
+      name: "Archive",
+      isDeletable: false,
+    },
+    Rejected: {
+      name: "Rejected",
+      isDeletable: false,
+    },
+  };
   const addToDB = (data) => {
     // Adding to projects document
     db.collection("projects")
       .add(data)
+      .then(async (docRef) => {
+        Object.values(defaultStatuses).forEach(async (status) => {
+          try {
+            await db
+              .collection("projects")
+              .doc(docRef.id)
+              .collection("stauses")
+              .doc(status.name)
+              .set(status);
+          } catch (err) {
+            console.log(err);
+            return;
+          }
+        });
+        return docRef;
+      })
       .then((docRef) => {
-        // adding to list of projects of user
         db.collection("users")
-          .doc(user.email)
+          .doc(currentUser.email)
           .collection("projects")
           .doc(docRef.id)
-          .set({ projectId: docRef.id, ...data })
-          .then(() => {
-            console.log("success");
-            successToast(toast, "Project Created Successfully");
-            onClose();
-          })
-          .catch((err) => console.log(err));
+          .set({ projectId: docRef.id, ...data });
+      })
+      .then(() => {
+        console.log("success");
+        successToast(toast, "Project Created Successfully");
+        onClose();
       })
       .catch((err) => console.log(err));
   };
@@ -192,4 +225,4 @@ function CreateProjectModal() {
   );
 }
 
-export default CreateProjectModal;
+export default memo(CreateProjectModal);

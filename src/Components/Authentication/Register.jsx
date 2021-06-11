@@ -2,12 +2,12 @@ import { Link, Redirect } from "react-router-dom";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
-import Card from "./Card";
+import Card from "../Card";
 import { useContext, useState } from "react";
 import { useToast } from "@chakra-ui/toast";
-import { auth, db } from "../firebase/config";
-import { errorToast, successToast } from "../utils/toasts";
-import { AuthContext } from "../Auth";
+import { auth, db } from "../../firebase/config";
+import { errorToast, successToast } from "../../utils/toasts";
+import { AuthContext } from "../../Auth";
 
 const Register = () => {
   const { currentUser } = useContext(AuthContext);

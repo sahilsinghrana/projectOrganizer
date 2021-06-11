@@ -1,7 +1,7 @@
 import { memo } from "react";
 const Card = ({ children, style }) => {
   return (
-    <div className="card-dark" style={style && { ...style }}>
+    <div className="card-dark" style={{ ...style }}>
       {children}
     </div>
   );

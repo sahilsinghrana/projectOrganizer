@@ -6,7 +6,8 @@ import PrivateRoute from "./PrivateRoute";
 
 const Routes = () => {
   return (
-    <div className="body">
+    <>
+      {" "}
       <PrivateRoute
         exact
         path="/project/:projectId"
@@ -17,13 +18,10 @@ const Routes = () => {
         path="/project/:projectId/:statusName"
         component={ProjectDashboard}
       />
-
       <PrivateRoute exact path="/" component={HomePage} />
-
       <Route exact path="/login" component={AuthenticationPage} />
-
       <Route exact path="/register" component={AuthenticationPage} />
-    </div>
+    </>
   );
 };
 

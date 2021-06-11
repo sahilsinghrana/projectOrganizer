@@ -1,17 +1,20 @@
 import { Button } from "@chakra-ui/button";
 import { Heading } from "@chakra-ui/layout";
+import { Link } from "@chakra-ui/react";
 import { useContext } from "react";
-import globalContext from "../context/globalContext";
 import { auth } from "../firebase/config";
 import "./header.css";
+import { AuthContext } from "../Auth";
+import { successToast } from "../utils/toasts";
+import { useToast } from "@chakra-ui/react";
 const Header = () => {
-  const { user, setUser } = useContext(globalContext);
+  const { currentUser } = useContext(AuthContext);
+  const toast = useToast();
   const logOut = () => {
     auth
       .signOut()
-      .then((response) => {
-        setUser();
-        console.log(response);
+      .then(() => {
+        successToast(toast, "Logged Out");
       })
       .catch((err) => {
         console.log(err);
@@ -20,13 +23,15 @@ const Header = () => {
   return (
     <div className="header-main">
       <div className="header-left-section">Menu</div>
-      <div className="header-brand-main">
-        <Heading as="h1" size="md" wordBreak="break-word">
-          Image Organizer
-        </Heading>
-      </div>
+      <Link href="/">
+        <div className="header-brand-main">
+          <Heading as="h1" size="md" wordBreak="break-word">
+            Image Organizer
+          </Heading>
+        </div>
+      </Link>
       <div className="header-navigation">
-        {user && (
+        {currentUser && (
           <Button
             onClick={logOut}
             colorScheme="pink"

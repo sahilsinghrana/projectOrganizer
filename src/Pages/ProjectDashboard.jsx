@@ -1,15 +1,19 @@
 import { Heading } from "@chakra-ui/layout";
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/tabs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import Organizer from "../Components/project/Organizer";
 import Tasks from "../Components/project/Tasks";
 import { db } from "../firebase/config";
+import { Button, Menu, MenuButton, MenuList } from "@chakra-ui/react";
+
+import DeleteProject from "../Components/project/DeleteProject";
 
 const ProjectDashboard = () => {
   let { projectId } = useParams();
   const [projectDetails, setProjectDetails] = useState();
-  useEffect(() => {
+
+  const fetchProject = useCallback(() => {
     db.collection("projects")
       .doc(projectId)
       .get()
@@ -17,7 +21,9 @@ const ProjectDashboard = () => {
         setProjectDetails(response.data());
         console.log(response.data());
       });
-  }, []);
+  }, [projectId]);
+
+  useEffect(() => fetchProject(), [fetchProject]);
 
   return (
     <div style={{}}>
@@ -44,12 +50,30 @@ const ProjectDashboard = () => {
         </span>
       </Heading>
       <Tabs>
-        <TabList overflow="auto" overflowY="hidden">
-          <Tab>Organizer</Tab>
-          <Tab>Tasks</Tab>
-          <Tab>Poll</Tab>
-          <Tab>Lucky Option</Tab>
-        </TabList>
+        <div style={{ display: "flex" }}>
+          <TabList
+            overflow="auto"
+            overflowY="hidden"
+            flex="3"
+            alignItems="center"
+          >
+            <Tab>Organizer</Tab>
+            <Tab>Tasks</Tab>
+            <Tab>Poll</Tab>
+            <Tab>Lucky Option</Tab>
+          </TabList>
+
+          <Menu>
+            <MenuButton
+              as={Button}
+              rightIcon={<i className="fas fa-ellipsis-v" />}
+            />
+            <MenuList>
+              {/* <MenuItem textColor="red"> */}
+              <DeleteProject projectId={projectId} /> {/* </MenuItem> */}
+            </MenuList>
+          </Menu>
+        </div>
         <TabPanels>
           <TabPanel>
             <Organizer projectId={projectId} />

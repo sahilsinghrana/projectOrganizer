@@ -1,35 +1,35 @@
 import { Image } from "@chakra-ui/image";
 import { Heading } from "@chakra-ui/layout";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import placeholderImage from "../assets/images/project_placeholder.jpg";
 import CreateProjectModal from "../Components/CreateProjectModal";
-import globalContext from "../context/globalContext";
 import { Link } from "react-router-dom";
 import "./styles.css";
 // import { projects } from "../data";
 import { db } from "../firebase/config";
+import { AuthContext } from "../Auth";
 const HomePage = () => {
-  const { user } = useContext(globalContext);
+  const { currentUser } = useContext(AuthContext);
   const [projects, setProjects] = useState([]);
-  useEffect(() => {
-    if (user) {
-      fetchProjects();
+  const fetchProjects = useCallback(async () => {
+    if (currentUser) {
+      let snapshot = await db
+        .collection("users")
+        .doc(currentUser.email)
+        .collection("projects")
+        .get();
+      let tmp = [];
+      snapshot.docs.forEach((doc) => {
+        tmp.push(doc.data());
+        console.log(doc.data());
+      });
+      setProjects(tmp);
     }
-  }, [user]);
-  const fetchProjects = async () => {
-    let snapshot = await db
-      .collection("users")
-      .doc(user.email)
-      .collection("projects")
-      .get();
-    let tmp = [];
-    console.log(snapshot);
-    snapshot.docs.forEach((doc) => {
-      tmp.push(doc.data());
-      console.log(doc.data());
-    });
-    setProjects(tmp);
-  };
+  }, [currentUser]);
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
   return (
     <div
       style={{
@@ -56,6 +56,7 @@ const HomePage = () => {
         ) : (
           projects.map((project) => (
             <ProjectCard
+              key={project.projectId}
               projectTitle={project.projectName}
               projectId={project.projectId}
               projectImageUrl={project.imageUrl}

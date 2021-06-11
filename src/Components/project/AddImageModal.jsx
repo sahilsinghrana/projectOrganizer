@@ -15,11 +15,11 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { memo, useContext, useEffect, useState } from "react";
-import globalContext from "../../context/globalContext";
+import { AuthContext } from "../../Auth";
 import { db, storage } from "../../firebase/config";
 import { errorToast, successToast } from "../../utils/toasts";
 const AddImageModal = ({ btnText, projectId, setFlag }) => {
-  const { user } = useContext(globalContext);
+  const { currentUser } = useContext(AuthContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedImages, setSelectedImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -60,7 +60,7 @@ const AddImageModal = ({ btnText, projectId, setFlag }) => {
     try {
       await db.collection("projects").doc(projectId).collection("images").add({
         imageURL: downloadURL,
-        uploadedBy: user.uid,
+        uploadedBy: currentUser.uid,
         uploadedAt: Date.now(),
         name: imageName,
       });
@@ -80,7 +80,7 @@ const AddImageModal = ({ btnText, projectId, setFlag }) => {
     setUploadCount(0);
     setTimeout(() => {
       onClose();
-    }, 2000);
+    }, 1500);
   }
 
   useEffect(() => () => {

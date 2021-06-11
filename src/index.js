@@ -7,13 +7,12 @@ import { ChakraProvider } from "@chakra-ui/react";
 import GlobalState from "./context/GlobalState";
 
 ReactDOM.render(
-  <React.StrictMode>
-    <GlobalState>
-      <ChakraProvider>
-        <App />
-      </ChakraProvider>
-    </GlobalState>
-  </React.StrictMode>,
+  // <React.StrictMode>
+  <GlobalState>
+    <ChakraProvider>
+      <App />
+    </ChakraProvider>
+  </GlobalState>,
   document.getElementById("root")
 );
 

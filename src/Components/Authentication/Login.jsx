@@ -2,17 +2,17 @@ import { Link, Redirect } from "react-router-dom";
 import { Button } from "@chakra-ui/button";
 import { FormControl, FormLabel } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
-import Card from "./Card";
+import Card from "../Card";
 import { useContext, useState } from "react";
-import { auth } from "../firebase/config";
-import Loader from "./Loader";
+import { auth } from "../../firebase/config";
+import Loader from "../Loader";
 import {
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/alert";
-import { AuthContext } from "../Auth";
+import { AuthContext } from "../../Auth";
 
 const Login = () => {
   const { currentUser } = useContext(AuthContext);
