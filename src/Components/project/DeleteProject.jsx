@@ -6,11 +6,13 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   Button,
+  useToast,
 } from "@chakra-ui/react";
 import { memo, useContext, useRef, useState } from "react";
 import { AuthContext } from "../../Auth";
-import { db } from "../../firebase/config";
+import { db, storage } from "../../firebase/config";
 import { useHistory } from "react-router-dom";
+import { errorToast, successToast } from "../../utils/toasts";
 
 function DeleteProject({ projectId }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +20,34 @@ function DeleteProject({ projectId }) {
   const cancelRef = useRef();
   const { currentUser } = useContext(AuthContext);
   const history = useHistory();
+  const toast = useToast();
   const deleteProject = async () => {
+    try {
+      await db
+        .collection("projects")
+        .doc(projectId)
+        .collection("statuses")
+        .delete();
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      await db
+        .collection("projects")
+        .doc(projectId)
+        .collection("images")
+        .delete();
+    } catch (error) {
+      console.log(error);
+    }
+
+    try {
+      await storage.ref().child(`projectImages`).child(projectId).delete();
+    } catch (error) {
+      console.log(error);
+    }
+
     try {
       // Delete from projects
       await db.collection("projects").doc(projectId).delete();
@@ -30,9 +59,13 @@ function DeleteProject({ projectId }) {
         .doc(projectId)
         .delete();
       console.log("Deleted Project");
-      history.push("/");
+      successToast(toast, "Project Deleted Successfully");
+      setTimeout(() => {
+        history.push("/");
+      }, 1500);
       // Delete Project Images
     } catch (err) {
+      errorToast(toast, "Error Deleting Project");
       console.log(err);
     }
 

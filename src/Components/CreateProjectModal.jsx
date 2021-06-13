@@ -47,43 +47,26 @@ function CreateProjectModal() {
     }));
   };
 
-  const createProject = (e) => {
+  const createProject = async (e) => {
     e.preventDefault();
+    await addToDB(formData);
+  };
 
+  const addImageHeader = async (pId) => {
     if (selectedImage) {
-      let uploadTask = storage
+      let uploadTask = await storage
         .ref()
-        .child(`projectHeader/${selectedImage.name}`)
+        .child(`projectImages/${pId}/header-${selectedImage.name}`)
         .put(selectedImage);
 
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          var progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-
-          setUploadProgress(progress);
-        },
-        (error) => {
-          // Handle unsuccessful uploads
-          console.log(error);
-          errorToast(toast, "error : check Log");
-          setUploadProgress(0);
-        },
-        () => {
-          // Handle successful uploads on complete
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-            // console.log("File available at", downloadURL);
-            addToDB({ ...formData, imageUrl: downloadURL });
-            setUploadProgress(0);
-          });
-        }
-      );
+      setUploadProgress(100);
+      const downloadUrl = await uploadTask.ref.getDownloadURL();
+      return downloadUrl;
     } else {
-      addToDB(formData);
+      return;
     }
   };
+
   const defaultStatuses = {
     All: {
       name: "All",
@@ -104,39 +87,54 @@ function CreateProjectModal() {
       isDeletable: false,
     },
   };
-  const addToDB = (data) => {
+  const addToDB = async (data) => {
     // Adding to projects document
-    db.collection("projects")
-      .add(data)
-      .then(async (docRef) => {
-        Object.values(defaultStatuses).forEach(async (status) => {
-          try {
-            await db
-              .collection("projects")
-              .doc(docRef.id)
-              .collection("stauses")
-              .doc(status.name)
-              .set(status);
-          } catch (err) {
-            console.log(err);
-            return;
-          }
+
+    // TEH problem is that you will get doc idafter creating the doc.
+    // So you wiill have to update the doc again
+    // Try using TRANSACTIONS
+
+    try {
+      let batch = db.batch();
+      const projectRef = await db.collection("projects").add(data);
+
+      const imageUrl = await addImageHeader(projectRef.id);
+
+      // Right now the Header image is stored in two different places .. MAKE A BETTER STRUCTURE
+
+      if (imageUrl)
+        await batch.update(db.collection("projects").doc(projectRef.id), {
+          imageUrl,
         });
-        return docRef;
-      })
-      .then((docRef) => {
-        db.collection("users")
+      Object.values(defaultStatuses).forEach(async (status) => {
+        batch.set(
+          db
+            .collection("projects")
+            .doc(projectRef.id)
+            .collection("statuses")
+            .doc(status.name),
+          status
+        );
+      });
+
+      batch.set(
+        db
+          .collection("users")
           .doc(currentUser.email)
           .collection("projects")
-          .doc(docRef.id)
-          .set({ projectId: docRef.id, ...data });
-      })
-      .then(() => {
-        console.log("success");
-        successToast(toast, "Project Created Successfully");
-        onClose();
-      })
-      .catch((err) => console.log(err));
+          .doc(projectRef.id),
+        { ...data, projectId: projectRef.id, imageUrl: imageUrl }
+      );
+
+      await batch.commit();
+
+      successToast(toast, "Project Created Successfully");
+
+      onClose();
+    } catch (err) {
+      errorToast(toast, "Error Occcured while Creating Project");
+      console.log(err);
+    }
   };
   return (
     <>
@@ -172,7 +170,11 @@ function CreateProjectModal() {
             >
               <FormControl id="projectName" isRequired>
                 <FormLabel>Project Name</FormLabel>
-                <Input placeholder="Project Name" onChange={handleChange} />
+                <Input
+                  autoComplete="off"
+                  placeholder="Project Name"
+                  onChange={handleChange}
+                />
               </FormControl>
               <FormControl id="projectDescription" isRequired>
                 <FormLabel>Project Description</FormLabel>
@@ -205,7 +207,6 @@ function CreateProjectModal() {
                     setTempSelectedImageURL(
                       URL.createObjectURL(e.target.files[0])
                     );
-                    console.log(e.target.files[0]);
                   }}
                 />
               </FormControl>
